@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans default-lazy-init="true"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+	<context:component-scan base-package="com.qunb"></context:component-scan>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.qunb.core.model.v3</value>
+			</list>
+		</property>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.transaction.factory_class">${hibernate.transaction.factory_class}</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<tx:annotation-driven proxy-target-class="true" />
+
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.DataserieDAO" id="dataserieDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Dataserie" />
+			</bean>
+		</property>
+	</bean>
+	<bean class="com.qunb.metadata.controller.DataserieController" id="dataserieController">
+		<property name="dataserieDAO" ref="dataserieDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.DataserieDimensionDAO" id="dataserieDimensionDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.DataserieDimension" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.DataserieDimensionController"
+		id="dataserieDimensionController">
+		<property name="dataserieDimensionDAO" ref="dataserieDimensionDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.DatasetDAO" id="datasetDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Dataset" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.DatasetController" id="datasetController">
+		<property name="datasetDAO" ref="datasetDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.DimensionDAO" id="dimensionDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Dimension" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.DimensionController" id="dimensionController">
+		<property name="dimensionDAO" ref="dimensionDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.UnitGroupDAO" id="unitGroupDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.UnitGroup" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.UnitGroupController" id="unitGroupController">
+		<property name="unitGroupDAO" ref="unitGroupDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.UnitPrefixDAO" id="unitPrefixDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.UnitPrefix" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.UnitPrefixController"
+		id="unitPrefixController">
+		<property name="unitPrefixDAO" ref="unitGroupDAO"></property>
+	</bean>
+
+
+	<bean class="com.qunb.core.dao.v3.UnitDAO" id="unitDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Unit" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.UnitController" id="unitController">
+		<property name="unitDAO" ref="unitDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.UserDAO" id="userDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.User" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.UserController" id="userController">
+		<property name="userDAO" ref="userDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.BookmarkDAO" id="bookmarkDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Bookmark" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.BookmarkController" id="bookmarkController">
+		<property name="bookmarkDAO" ref="bookmarkDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.CategoryDAO" id="categoryDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Category" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.CategoryController" id="categoryController">
+		<property name="categoryDAO" ref="categoryDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.OrganizationDAO" id="organizationDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Organization" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.OrganizationController"
+		id="organizationController">
+		<property name="organizationDAO" ref="organizationDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.CategoryRelationDAO" id="categoryRelationDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.CategoryRelation" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.CategoryRelationController"
+		id="categoryRelationController">
+		<property name="categoryRelationDAO" ref="categoryRelationDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.DimGroupDAO" id="dimGroupDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.DimGroup" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.DimGroupController" id="dimGroupController">
+		<property name="dimGroupDAO" ref="dimGroupDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.AggMethodDAO" id="aggMethodDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.AggMethod" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.AggMethodController" id="aggMethodController">
+		<property name="aggMethodDAO" ref="aggMethodDAO"></property>
+	</bean>
+	<bean class="com.qunb.core.dao.v3.LanguageDAO" id="languageDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.Language" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.LanguageController" id="languageController">
+		<property name="languageDAO" ref="languageDAO"></property>
+	</bean>
+
+
+	<bean class="com.qunb.core.dao.v3.UploadTaskDAO" id="uploadTaskDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.UploadTask" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.UploadTaskController"
+		id="uploadTaskController">
+		<property name="uploadTaskDAO" ref="uploadTaskDAO"></property>
+	</bean>
+
+	<bean class="com.qunb.core.dao.v3.DatasetUploadDAO" id="datasetUploadDAO">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+		<property name="clazz">
+			<bean class="java.lang.Class" factory-method="forName">
+				<constructor-arg value="com.qunb.core.model.v3.DatasetUpload" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean class="com.qunb.metadata.controller.DatasetUploadController"
+		id="datasetUploadController">
+		<property name="datasetUploadDAO" ref="datasetUploadDAO"></property>
+	</bean>
+
+</beans>
